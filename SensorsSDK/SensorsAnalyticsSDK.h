@@ -1,0 +1,37 @@
+//
+//  SensorsAnalyticsSDK.h
+//  SensorsSDK
+//
+//  Created by 张慧鑫 on 2021/3/10.
+//
+
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface SensorsAnalyticsSDK : NSObject
+/**
+ @abstract
+ 获取SDK实例
+ 
+ @return返回单例
+ */
+
++(SensorsAnalyticsSDK *)sharedInstance;
+@end
+
+@interface SensorsAnalyticsSDK (Track)
+
+/**
+ @abstract
+ 调用track接口触发事件
+ @discusstion
+ properties是一个NSDictionary。
+ 其中key是属性名称，必须是NSString类型；value则是属性的内容
+ @param eventName 事件名称
+ @param properties 事件属性
+ */
+-(void)track:(NSString *)eventName properties:(nullable NSDictionary<NSString *,id>*)properties;
+@end
+
+NS_ASSUME_NONNULL_END
