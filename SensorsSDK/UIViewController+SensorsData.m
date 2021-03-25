@@ -9,7 +9,7 @@
 #import "SensorsAnalyticsSDK.h"
 #import "NSObject+SASwizzler.h"
 
-static NSString * const kSensoorsDataBliackListFileName = @"sensorsdata_black_list";
+static NSString * const kSensorsDataBliackListFileName = @"sensorsdata_black_list";
 @implementation UIViewController (SensorsData)
 
 +(void)load{
@@ -39,8 +39,8 @@ static NSString * const kSensoorsDataBliackListFileName = @"sensorsdata_black_li
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         //获取黑名单文件路径
-        NSBundle *mainBundle = [NSBundle bundleForClass:[SensorsAnalyticsSDK class]];
-        NSString *path = [mainBundle pathForResource:kSensoorsDataBliackListFileName ofType:@"plist"];
+        NSBundle *SDKBundle = [NSBundle bundleForClass:[SensorsAnalyticsSDK class]];
+        NSString *path = [SDKBundle pathForResource:kSensorsDataBliackListFileName ofType:@"plist"];
         NSArray *classNames = [NSArray arrayWithContentsOfFile:path];
         NSMutableSet *set = [NSMutableSet setWithCapacity:classNames.count];
         for (NSString *className in classNames) {
