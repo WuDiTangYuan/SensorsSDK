@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SensorsAnalyticsSDK.h"
+#import <SensorsSDK/SensorsAnalyticsSDK.h>
 //! Project version number for SensorsSDK.
 FOUNDATION_EXPORT double SensorsSDKVersionNumber;
 
