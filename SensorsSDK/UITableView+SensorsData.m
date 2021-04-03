@@ -9,6 +9,7 @@
 #import "NSObject+SASwizzler.h"
 #import <objc/message.h>
 #import "SensorsAnalyticsSDK.h"
+#import "SensorsAnalyticsDynamicDelegate.h"
 
 @implementation UITableView (SensorsData)
 
@@ -21,7 +22,10 @@
     
     //方案1: 方法交换
     //交换delegate中的 tableView:didSelectRowAtIndexPath: 方法
-    [self sensorsdata_swizzleDidSelectRowAtIndexPathMethodWithDelegate:delegate];
+//    [self sensorsdata_swizzleDidSelectRowAtIndexPathMethodWithDelegate:delegate];
+    
+    //方案2:动态子类
+    [SensorsAnalyticsDynamicDelegate proxyWithTableViewDelegate:delegate];
 }
 
 static void sensorsdata_tableViewDidSelectRow(id object,SEL selector,UITableView *tableView,NSIndexPath *indexPath){
