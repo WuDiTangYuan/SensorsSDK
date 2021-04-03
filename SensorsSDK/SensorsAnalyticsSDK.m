@@ -185,10 +185,12 @@ static NSString * const SensorsAnalyticsVersion = @"1.0.0";
     
     NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
     
-    //TODO: 获取用户点击的UITableViewCell对象
-    //TODO: 设置被用户点击的UITableViewCell控件上的内容($element_content)
-    //TODO:设置被用户点击的UITableViewCell控件所在的位置($element_position)
-    
+    //获取用户点击的UITableViewCell对象
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    //设置被用户点击的UITableViewCell控件上的内容($element_content)
+    eventProperties[@"$element_content"] = cell.sensorsdata_elementContent;
+    //设置被用户点击的UITableViewCell控件所在的位置($element_position)
+    eventProperties[@"$element_position"] = [NSString stringWithFormat:@"section:%ld,row:%ld",(long)indexPath.section,(long)indexPath.row];
     //添加自定义属性
     [eventProperties addEntriesFromDictionary:properties];
     //触发AppClick事件

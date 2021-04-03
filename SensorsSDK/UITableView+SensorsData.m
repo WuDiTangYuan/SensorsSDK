@@ -10,6 +10,8 @@
 #import <objc/message.h>
 #import "SensorsAnalyticsSDK.h"
 #import "SensorsAnalyticsDynamicDelegate.h"
+#import "SensorsAnalyticsDelegateProxy.h"
+#import "UIScrollView+SensorsData.h"
 
 @implementation UITableView (SensorsData)
 
@@ -18,14 +20,32 @@
 }
 
 -(void)sensorsdata_setDelegate:(id<UITableViewDelegate>)delegate{
-    [self sensorsdata_setDelegate:delegate];
     
-    //方案1: 方法交换
+    //方案1:方法交换
+    [self sensorsdata_setDelegate:delegate];
     //交换delegate中的 tableView:didSelectRowAtIndexPath: 方法
-//    [self sensorsdata_swizzleDidSelectRowAtIndexPathMethodWithDelegate:delegate];
+    [self sensorsdata_swizzleDidSelectRowAtIndexPathMethodWithDelegate:delegate];
     
     //方案2:动态子类
+    [self sensorsdata_setDelegate:delegate];
     [SensorsAnalyticsDynamicDelegate proxyWithTableViewDelegate:delegate];
+    
+    //方案3:NSProxy消息转发
+    //销毁保存的委托对象
+    self.sensorsdata_delegateProxy = nil;
+    if (delegate) {
+        SensorsAnalyticsDelegateProxy *proxy = [SensorsAnalyticsDelegateProxy proxyWithTableViewDelegate:delegate];
+        //保存委托对象
+        self.sensorsdata_delegateProxy = proxy;
+        //调用原始方法，将代理设置为委托对象
+        [self sensorsdata_setDelegate:proxy];
+    }else{
+        //调用原始方法，将代理设置为nil
+        [self sensorsdata_setDelegate:nil];
+    }
+    
+   
+    
 }
 
 static void sensorsdata_tableViewDidSelectRow(id object,SEL selector,UITableView *tableView,NSIndexPath *indexPath){

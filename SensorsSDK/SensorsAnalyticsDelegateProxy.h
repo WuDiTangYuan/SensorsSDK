@@ -1,0 +1,19 @@
+//
+//  SensorsAnalyticsDelegateProxy.h
+//  SensorsSDK
+//
+//  Created by 张慧鑫 on 2021/4/3.
+//
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface SensorsAnalyticsDelegateProxy : NSProxy<UITableViewDelegate>
+
++(instancetype)proxyWithTableViewDelegate:(id<UITableViewDelegate>)delegate;
+
+@end
+
+NS_ASSUME_NONNULL_END

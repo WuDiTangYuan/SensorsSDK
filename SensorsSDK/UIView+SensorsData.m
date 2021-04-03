@@ -15,7 +15,23 @@
 }
 
 - (NSString *)sensorsdata_elementContent{
-    return nil;
+    //如果是隐藏控件，不获取内容，直接返回
+    if (self.isHidden || self.alpha == 0) {
+        return nil;
+    }
+    //初始化一个可变数组用于保存控件的内容
+    NSMutableArray *contents = [NSMutableArray array];
+    for (UIView *view in self.subviews) {
+        //获取子控件的内容
+        //如果子控件有内容，例如UILabel的text。获取到的就是text属性
+        //如果子类没有内容，递归调用该方法，获取其子控件的内容
+        NSString *content = view.sensorsdata_elementContent;
+        if ([content length] > 0) {
+            [contents addObject:content];
+        }
+    }
+    //当未获取到子控件的内容时返回nil，如果获取到多个子控件的内容时，用 - 拼接起来
+    return contents.count == 0 ? nil:[contents componentsJoinedByString:@"-"];
 }
 
 - (UIViewController *)sensorsdata_viewController{
@@ -30,10 +46,17 @@
 }
 @end
 
+@implementation UILabel (SensorsData)
+
+- (NSString *)sensorsdata_elementContent{
+    return self.text ?: super.sensorsdata_elementContent;
+}
+@end
+
 @implementation UIButton (SensorsData)
 
 - (NSString *)sensorsdata_elementContent{
-    return self.titleLabel.text;
+    return self.currentTitle ?: super.sensorsdata_elementContent;
 }
 @end
 
