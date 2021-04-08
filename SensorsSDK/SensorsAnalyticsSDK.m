@@ -11,7 +11,8 @@
 #import <UIKit/UIKit.h>
 #import "UIView+SensorsData.h"
 
-static NSString * const SensorsAnalyticsVersion = @"1.0.0";
+static NSString *const SensorsAnalyticsVersion = @"1.0.0";
+static NSString *const SensorsAnalyticsAnonymousId = @"cn.sensorsdata.anonymous_id";
 
 @interface SensorsAnalyticsSDK()
 
@@ -23,7 +24,9 @@ static NSString * const SensorsAnalyticsVersion = @"1.0.0";
 
 @end
 
-@implementation SensorsAnalyticsSDK
+@implementation SensorsAnalyticsSDK{
+    NSString *_anonymousId;
+}
 
 -(instancetype)init{
     if (self = [super init]) {
@@ -45,6 +48,51 @@ static NSString * const SensorsAnalyticsVersion = @"1.0.0";
     });
     return sdk;
     
+}
+
+- (void)setAnonymousId:(NSString *)anonymousId{
+    _anonymousId = anonymousId;
+    //保存设备ID(匿名ID)
+    [self saveAnonymousId:anonymousId];
+}
+
+//获取设备ID的优先级顺序：IDFA > IDFV > UUID
+- (NSString *)anonymousId{
+    if (_anonymousId) {
+        return _anonymousId;
+    }
+    //从NSUserDefaults中获取设备ID(匿名ID)
+    _anonymousId = [[NSUserDefaults standardUserDefaults] objectForKey:SensorsAnalyticsAnonymousId];
+    if (_anonymousId) {
+        return _anonymousId;
+    }
+    //获取IDFA
+    //这里使用NSClassFromString 是为了防止应用程序没有导入AdSupport.framework
+    Class cls = NSClassFromString(@"ASIdentifierManager");
+    if (cls) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "Wundeclared-selector"
+        //获取ASIdentifierManager的单例对象
+        id manager = [cls performSelector:@selector(sharedmanager)];
+        SEL selector = NSSelectorFromString(@"isAdvertisingTrackingEnabled");
+        BOOL (*isAdvertisingTrackingEnabled)(id,SEL) = (BOOL (*)(id,SEL))[manager methodForSelector:selector];
+        if (isAdvertisingTrackingEnabled(manager,selector)) {
+            //使用IDFA作为设备ID(匿名ID)
+            _anonymousId = [(NSUUID*)[manager performSelector:@selector(advertisingInentifier)]UUIDString];
+        }
+#pragma clang diagnostic pop
+    }
+    if (!_anonymousId) {
+        //使用IDFV作为设备ID(匿名ID)
+        _anonymousId = UIDevice.currentDevice.identifierForVendor.UUIDString;
+    }
+    if (!_anonymousId) {
+        //使用UUID作为设备ID(匿名ID)
+        _anonymousId = NSUUID.UUID.UUIDString;
+    }
+    //保存设备ID(匿名ID)
+    [self saveAnonymousId:_anonymousId];
+    return _anonymousId;
 }
 
 #pragma mark - Properties
@@ -105,6 +153,12 @@ static NSString * const SensorsAnalyticsVersion = @"1.0.0";
     
 }
 
+-(void)saveAnonymousId:(NSString*)anonymousId{
+    //保存设备ID
+    [[NSUserDefaults standardUserDefaults]setObject:anonymousId forKey:SensorsAnalyticsAnonymousId];
+    [[NSUserDefaults standardUserDefaults]synchronize];
+}
+
 -(void)applicationDidEnterBackground:(NSNotification*)notification{
     NSLog(@"Application Did Enter Background!");
     self.applicationWillResignActive = NO;
@@ -149,9 +203,11 @@ static NSString * const SensorsAnalyticsVersion = @"1.0.0";
 
 -(void)track:(NSString *)eventName properties:(nullable NSDictionary<NSString *,id>*)properties{
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
+    //设置事件的distinct_id用来唯一标识一个用户
+    event[@"distinct_id"] = self.anonymousId;
     //设置事件名称
     event[@"event"] = eventName;
-    //设置事件戳 单位：豪秒
+    //设置时间戳 单位：豪秒
     event[@"time"] = [NSNumber numberWithLong:NSDate.date.timeIntervalSince1970 *1000];
     NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
     //添加预置属性

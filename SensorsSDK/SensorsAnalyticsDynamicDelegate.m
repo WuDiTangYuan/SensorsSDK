@@ -115,7 +115,7 @@ typedef void (*SensorsDidSelectItemImplementation)(id,SEL,UICollectionView*,NSIn
 }
 
 +(void)proxyWithCollectionViewDelegate:(id<UICollectionViewDelegate>)delegate{
-    SEL originalSelector = NSSelectorFromString(@"collectionView:didSelectRowAtIndexPath:");
+    SEL originalSelector = NSSelectorFromString(@"collectionView:didSelectItemAtIndexPath:");
     //当delegate中没有实现tableView:didSelectRowAtIndexPath:方法时，直接返回
     if (![delegate respondsToSelector:originalSelector]) {
         return;

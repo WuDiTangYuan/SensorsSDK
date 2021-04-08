@@ -11,6 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SensorsAnalyticsSDK : NSObject
+
+//设备ID(匿名ID)
+@property(nonatomic,copy)NSString *anonymousId;
 /**
  @abstract
  获取SDK实例

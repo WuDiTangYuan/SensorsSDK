@@ -7,10 +7,12 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface ViewController ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSource>
 
 @property(nonatomic,strong)UITableView *tableView;
 @property(nonatomic,copy)NSArray *dataSource;
+@property(nonatomic,strong)UICollectionView *collectionView;
+@property(nonatomic,strong)UIImageView *imageView;
 
 @end
 
@@ -77,11 +79,34 @@
 //    stepper.center = self.view.center;
     
     //测试UITableView埋点
-    self.tableView = [[UITableView alloc]initWithFrame:self.view.frame style:UITableViewStylePlain];
-    self.tableView.delegate = self;//遵循协议
-    self.tableView.dataSource = self;//遵循数据源
-    self.dataSource = @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8"];
-    [self.view addSubview:self.tableView];
+//    self.tableView = [[UITableView alloc]initWithFrame:self.view.frame style:UITableViewStylePlain];
+//    self.tableView.delegate = self;//遵循协议
+//    self.tableView.dataSource = self;//遵循数据源
+//    self.dataSource = @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8"];
+//    [self.view addSubview:self.tableView];
+    
+    //测试UICollectionView埋点
+//    UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
+//    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+//    layout.itemSize = CGSizeMake(200, 100);
+//    _collectionView = [[UICollectionView alloc] initWithFrame:self.view.frame collectionViewLayout:layout];
+//    _collectionView.delegate = self;
+//    _collectionView.dataSource = self;
+//    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"CellId"];
+//    [self.view addSubview:_collectionView];
+    
+    //测试手势采集埋点
+    self.imageView = [[UIImageView alloc]initWithImage:[UIImage addImage]];
+    [self.view addSubview:self.imageView];
+    self.imageView.center = self.view.center;
+    self.imageView.userInteractionEnabled = YES;
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapAction:)];
+    [tapGestureRecognizer addTarget:self action:@selector(tapAction:)];
+    [self.imageView addGestureRecognizer:tapGestureRecognizer];
+    UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressAction:)];
+    [longPressGestureRecognizer addTarget:self action:@selector(longPressAction:)];
+    [self.imageView addGestureRecognizer:longPressGestureRecognizer];
+    
 }
 
 #pragma mark - UITableViewDelegate,UITableViewDataSource
@@ -112,14 +137,33 @@
     NSLog(@"点击了第 %ld 行",(long)indexPath.row + 1);
 }
 
+#pragma mack - collection delegate
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    return 50;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    UICollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CellId" forIndexPath:indexPath];
+    cell.backgroundColor = [UIColor colorWithRed:arc4random()%225/225.0 green:arc4random()%225/225.0 blue:arc4random()%225/225.0 alpha:1];
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    NSLog(@"点击了第 %ld 行",(long)indexPath.row + 1);
+}
+
 
 -(void)valueChanged:(UISwitch*)mySwitch{
- 
-  if(mySwitch.on==YES){
-    NSLog(@"开关被打开了");
-  }else{
-    NSLog(@"开关被关闭了");
-  }
+    if(mySwitch.on==YES){
+        NSLog(@"开关被打开了");
+    }else{
+        NSLog(@"开关被关闭了");
+    }
 }
 
 -(void)buttonClick:(id)sender{
@@ -131,14 +175,20 @@
 }
 
 -(void)segmentAction:(UISegmentedControl *)Seg{
-
     NSInteger index = Seg.selectedSegmentIndex;
     NSLog(@"当前的选中的索引是%@", @(index));
 }
 
 -(void)stepperAction:(UIStepper*)stepper{
     NSLog(@"当前stepper的值是:%@", [NSString stringWithFormat:@"%g",stepper.value]);
-    
+}
+
+-(void)tapAction:(UITapGestureRecognizer*)sender{
+    NSLog(@"点击手势触发了");
+}
+
+-(void)longPressAction:(UILongPressGestureRecognizer*)sender{
+    NSLog(@"长按手势触发了");
 }
 
 
