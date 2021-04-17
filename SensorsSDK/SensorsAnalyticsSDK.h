@@ -14,6 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 //设备ID(匿名ID)
 @property(nonatomic,copy)NSString *anonymousId;
+
+/**
+ 禁用init方法
+ */
+-(instancetype)init NS_UNAVAILABLE;
+
+/**
+ 初始化SDK
+ @param urlString 接收数据的服务端URL
+ */
++(void)startWithServerURL:(NSString*)urlString;
+
 /**
  @abstract
  获取SDK实例

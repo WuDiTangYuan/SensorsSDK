@@ -50,7 +50,7 @@ static NSUInteger const SensorsAnalyticsDefaultFlushEventCount = 50;
     NSString *_anonymousId;
 }
 
--(instancetype)init{
+-(instancetype)initWithServerURL:(NSString*)serverURL{
     if (self = [super init]) {
         _automaticProperties = [self collectAutomaticProperties];
         
@@ -73,7 +73,7 @@ static NSUInteger const SensorsAnalyticsDefaultFlushEventCount = 50;
         _database = [[SensorsAnalyticsDatabase alloc]init];
         
         //此处需要配置一个可用的serverURL
-        _network = [[SensorsAnalyticsNetwork alloc]initWithServerURL:[NSURL URLWithString:@"http://rap2api.taobao.org/app/mock/281695/sensors_data_api"]];
+        _network = [[SensorsAnalyticsNetwork alloc]initWithServerURL:[NSURL URLWithString:serverURL]];
         
         //建立监听
         [self setupListeners];
@@ -81,15 +81,16 @@ static NSUInteger const SensorsAnalyticsDefaultFlushEventCount = 50;
     return self;
 }
 
-+(SensorsAnalyticsSDK *)sharedInstance{
-    
+static SensorsAnalyticsSDK *sharedInstance = nil;
++ (void)startWithServerURL:(NSString *)urlString{
     static dispatch_once_t onceTken;
-    static SensorsAnalyticsSDK *sdk = nil;
     dispatch_once(&onceTken, ^{
-        sdk = [[SensorsAnalyticsSDK alloc]init];
+        sharedInstance = [[SensorsAnalyticsSDK alloc]initWithServerURL:urlString];
     });
-    return sdk;
-    
+}
+
++(SensorsAnalyticsSDK *)sharedInstance{
+    return sharedInstance;
 }
 
 - (void)setAnonymousId:(NSString *)anonymousId{

@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [SensorsAnalyticsSDK sharedInstance];
+    [SensorsAnalyticsSDK startWithServerURL:@"http://rap2api.taobao.org/app/mock/281695/sensors_data_api"];
     [[SensorsAnalyticsSDK sharedInstance] track:@"MyFirstEvent" properties:@{@"testKey":@"testValue"}];
     [[SensorsAnalyticsSDK sharedInstance] login:@"123456"];
     self.window = [[UIWindow alloc]initWithFrame:UIScreen.mainScreen.bounds];
