@@ -123,6 +123,13 @@
     [buttonEnd addTarget:self action:@selector(buttonClickEnd:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:buttonEnd];
     
+    UIButton *buttonUpload = [UIButton buttonWithType:UIButtonTypeCustom];
+    buttonUpload.backgroundColor = [UIColor redColor];
+    buttonUpload.frame = CGRectMake(0, 450, 100, 50);
+    [buttonUpload setTitle:@"上传" forState:UIControlStateNormal];
+    [buttonUpload addTarget:self action:@selector(buttonUpload:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:buttonUpload];
+    
     
 }
 
@@ -216,5 +223,8 @@
     [[SensorsAnalyticsSDK sharedInstance]trackTimerEnd:@"do something" properties:nil];
 }
 
-
+-(void)buttonUpload:(id)sender{
+    //测试数据上传
+    [[SensorsAnalyticsSDK sharedInstance]flush];
+}
 @end

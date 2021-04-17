@@ -73,8 +73,12 @@ static NSString *const SensorsAnalyticsSerialQueueLabel = @"cn.sensorsdata.seria
     dispatch_async(self.queue, ^{
         //从文件路径中读取数据
         NSData *data = [NSData dataWithContentsOfFile:filePath];
-        //解析在文件中读取的Json数据
-        NSMutableArray *allEvents = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        NSMutableArray *allEvents;
+        //这里需要判断data是否为空，不为空才可以转化
+        if (data) {
+            //解析在文件中读取的Json数据
+            allEvents = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        }
         //将文件内的数据保存到内存中
         self.events = allEvents? allEvents : [NSMutableArray array];
         

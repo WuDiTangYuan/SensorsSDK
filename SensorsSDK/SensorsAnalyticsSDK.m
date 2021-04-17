@@ -13,6 +13,7 @@
 #import "SensorsAnalyticsKeychainItem.h"
 #import "SensorsAnalyticsFileStore.h"
 #import "SensorsAnalyticsDatabase.h"
+#import "SensorsAnalyticsNetwork.h"
 
 static NSString *const SensorsAnalyticsVersion = @"1.0.0";
 static NSString *const SensorsAnalyticsAnonymousId = @"cn.sensorsdata.anonymous_id";
@@ -21,6 +22,7 @@ static NSString *const SensorsAnalyticsLoginId = @"cn.sensorsdata.login_id";
 static NSString *const SensorsAnalyticsEventBeginKey = @"event_begin";
 static NSString *const SensorsAnalyticsEventDurationKey = @"event_duration";
 static NSString *const SensorsAnalyticsEventIsPauseKey = @"is_pause";
+static NSUInteger const SensorsAnalyticsDefaultFlushEventCount = 50;
 
 @interface SensorsAnalyticsSDK()
 
@@ -39,6 +41,8 @@ static NSString *const SensorsAnalyticsEventIsPauseKey = @"is_pause";
 @property(nonatomic,strong)SensorsAnalyticsFileStore *fileStore;
 //数据库存储对象
 @property(nonatomic,strong)SensorsAnalyticsDatabase *database;
+//发送网络请求对象
+@property(nonatomic,strong)SensorsAnalyticsNetwork *network;
 
 @end
 
@@ -67,6 +71,9 @@ static NSString *const SensorsAnalyticsEventIsPauseKey = @"is_pause";
         
         //初始化SensorsAnalyticsDatabase类的对象，并使用默认路径
         _database = [[SensorsAnalyticsDatabase alloc]init];
+        
+        //此处需要配置一个可用的serverURL
+        _network = [[SensorsAnalyticsNetwork alloc]initWithServerURL:[NSURL URLWithString:@"http://rap2api.taobao.org/app/mock/281695/sensors_data_api"]];
         
         //建立监听
         [self setupListeners];
@@ -267,6 +274,26 @@ static NSString *const SensorsAnalyticsEventIsPauseKey = @"is_pause";
     [[NSUserDefaults standardUserDefaults]synchronize];
 }
 
+- (void)flush{
+    //默认一次向服务器发送50条埋点数据
+    [self flushByEventCount:SensorsAnalyticsDefaultFlushEventCount];
+}
+
+-(void)flushByEventCount:(NSUInteger)count{
+    //获取本地数据
+    NSArray<NSString*> *events = [self.database selectEventsForCount:count];
+    //当本地数据为0或者上传失败时，直接返回，退出递归调用
+    if (events.count == 0 || ![self.network flushEvents:events]) {
+        return;
+    }
+    //当删除数据失败时，直接返回，退出递归调用，避免出现死循环
+    if (![self.database deleteEventsForCount:count]) {
+        return;
+    }
+    //递归上传本地数据
+    [self flushByEventCount:count];
+}
+
 #pragma mark - Property
 //目前未使用此方法获取当前时间
 +(double)currentTime{
@@ -310,7 +337,7 @@ static NSString *const SensorsAnalyticsEventIsPauseKey = @"is_pause";
     //将事件的内容打印出来
     [self printEvent:event];
     //将事件存储到文件里
-//    [self.fileStore saveEvent:event];
+    [self.fileStore saveEvent:event];
     //将事件存储到数据库里面
     [self.database insertEvent:event];
 }

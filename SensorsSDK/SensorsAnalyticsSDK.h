@@ -29,6 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(void)login:(NSString*)loginId;
 
+/**
+ 向服务器同步本地所有数据
+ */
+-(void)flush;
+
 @end
 
 @interface SensorsAnalyticsSDK (Track)
