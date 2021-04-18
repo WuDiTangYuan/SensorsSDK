@@ -7,6 +7,7 @@
 
 #import "ViewController.h"
 #import <SensorsSDK/SensorsSDK.h>
+#import "SensorsDataReleaseObject.h"
 
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSource>
 
@@ -109,26 +110,37 @@
 //    [self.imageView addGestureRecognizer:longPressGestureRecognizer];
     
     //测试事件时长埋点埋点
-    UIButton *buttonBegin = [UIButton buttonWithType:UIButtonTypeCustom];
-    buttonBegin.backgroundColor = [UIColor redColor];
-    buttonBegin.frame = CGRectMake(0, 150, 100, 50);
-    [buttonBegin setTitle:@"开始" forState:UIControlStateNormal];
-    [buttonBegin addTarget:self action:@selector(buttonClickBegin:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonBegin];
+//    UIButton *buttonBegin = [UIButton buttonWithType:UIButtonTypeCustom];
+//    buttonBegin.backgroundColor = [UIColor redColor];
+//    buttonBegin.frame = CGRectMake(0, 150, 100, 50);
+//    [buttonBegin setTitle:@"开始" forState:UIControlStateNormal];
+//    [buttonBegin addTarget:self action:@selector(buttonClickBegin:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:buttonBegin];
+//
+//    UIButton *buttonEnd = [UIButton buttonWithType:UIButtonTypeCustom];
+//    buttonEnd.backgroundColor = [UIColor redColor];
+//    buttonEnd.frame = CGRectMake(0, 300, 100, 50);
+//    [buttonEnd setTitle:@"结束" forState:UIControlStateNormal];
+//    [buttonEnd addTarget:self action:@selector(buttonClickEnd:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:buttonEnd];
+//
+//    UIButton *buttonUpload = [UIButton buttonWithType:UIButtonTypeCustom];
+//    buttonUpload.backgroundColor = [UIColor redColor];
+//    buttonUpload.frame = CGRectMake(0, 450, 100, 50);
+//    [buttonUpload setTitle:@"上传" forState:UIControlStateNormal];
+//    [buttonUpload addTarget:self action:@selector(buttonUpload:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:buttonUpload];
     
-    UIButton *buttonEnd = [UIButton buttonWithType:UIButtonTypeCustom];
-    buttonEnd.backgroundColor = [UIColor redColor];
-    buttonEnd.frame = CGRectMake(0, 300, 100, 50);
-    [buttonEnd setTitle:@"结束" forState:UIControlStateNormal];
-    [buttonEnd addTarget:self action:@selector(buttonClickEnd:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonEnd];
+    //测试崩溃采集全埋点
+    UIButton *buttonException = [UIButton buttonWithType:UIButtonTypeCustom];
+    buttonException.backgroundColor = [UIColor redColor];
+    buttonException.frame = CGRectMake(0, 0, 150, 50);
+    [buttonException setTitle:@"点击测试异常" forState:UIControlStateNormal];
+    [buttonException addTarget:self action:@selector(buttonException:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:buttonException];
+    buttonException.center = self.view.center;
     
-    UIButton *buttonUpload = [UIButton buttonWithType:UIButtonTypeCustom];
-    buttonUpload.backgroundColor = [UIColor redColor];
-    buttonUpload.frame = CGRectMake(0, 450, 100, 50);
-    [buttonUpload setTitle:@"上传" forState:UIControlStateNormal];
-    [buttonUpload addTarget:self action:@selector(buttonUpload:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonUpload];
+
     
     
 }
@@ -227,4 +239,14 @@
     //测试数据上传
     [[SensorsAnalyticsSDK sharedInstance]flush];
 }
+
+-(void)buttonException:(id)sender{
+    //测试NSException
+//    NSArray *arr = @[@"test"];
+//    NSLog(@"%@",arr[100]);
+    //测试signal
+    SensorsDataReleaseObject *obj = [[SensorsDataReleaseObject alloc]init];
+    [obj signalCrash];
+}
+
 @end

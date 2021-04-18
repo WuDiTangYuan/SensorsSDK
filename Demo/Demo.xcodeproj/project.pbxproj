@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		765BBC3B262C22E30011615C /* SensorsDataReleaseObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 765BBC3A262C22E30011615C /* SensorsDataReleaseObject.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		76643C9425F8FCE000D858E4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76643C9325F8FCE000D858E4 /* AppDelegate.m */; };
 		76643C9A25F8FCE000D858E4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76643C9925F8FCE000D858E4 /* ViewController.m */; };
 		76643C9D25F8FCE000D858E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76643C9B25F8FCE000D858E4 /* Main.storyboard */; };
@@ -51,6 +52,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		765BBC39262C22E30011615C /* SensorsDataReleaseObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SensorsDataReleaseObject.h; sourceTree = "<group>"; };
+		765BBC3A262C22E30011615C /* SensorsDataReleaseObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SensorsDataReleaseObject.m; sourceTree = "<group>"; };
 		76643C8F25F8FCE000D858E4 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76643C9225F8FCE000D858E4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		76643C9325F8FCE000D858E4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 				76643C9325F8FCE000D858E4 /* AppDelegate.m */,
 				76643C9825F8FCE000D858E4 /* ViewController.h */,
 				76643C9925F8FCE000D858E4 /* ViewController.m */,
+				765BBC39262C22E30011615C /* SensorsDataReleaseObject.h */,
+				765BBC3A262C22E30011615C /* SensorsDataReleaseObject.m */,
 				76643C9B25F8FCE000D858E4 /* Main.storyboard */,
 				76643C9E25F8FCE100D858E4 /* Assets.xcassets */,
 				76643CA025F8FCE100D858E4 /* LaunchScreen.storyboard */,
@@ -289,6 +294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				765BBC3B262C22E30011615C /* SensorsDataReleaseObject.m in Sources */,
 				76643C9A25F8FCE000D858E4 /* ViewController.m in Sources */,
 				76643C9425F8FCE000D858E4 /* AppDelegate.m in Sources */,
 				76643CA525F8FCE100D858E4 /* main.m in Sources */,

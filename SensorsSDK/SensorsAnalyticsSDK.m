@@ -14,6 +14,7 @@
 #import "SensorsAnalyticsFileStore.h"
 #import "SensorsAnalyticsDatabase.h"
 #import "SensorsAnalyticsNetwork.h"
+#import "SensorsAnalyticsExceptionHandler.h"
 
 static NSString *const SensorsAnalyticsVersion = @"1.0.0";
 static NSString *const SensorsAnalyticsAnonymousId = @"cn.sensorsdata.anonymous_id";
@@ -59,37 +60,29 @@ static NSString *const SensorsAnalyticsSerialQueueLabel = @"cn.sensorsdata.seria
 -(instancetype)initWithServerURL:(NSString*)serverURL{
     if (self = [super init]) {
         _automaticProperties = [self collectAutomaticProperties];
-        
         //设置是否被动启动标记
         _launchedPassively = UIApplication.sharedApplication.backgroundTimeRemaining != UIApplicationBackgroundFetchIntervalNever;
-        
         //从NSUserDefaults中获取登陆ID
         _loginId = [[NSUserDefaults standardUserDefaults]objectForKey:SensorsAnalyticsLoginId];
-        
         //初始化时间戳
         _trackTimer = [NSMutableDictionary dictionary];
-        
         //初始化保存进入后台时未暂停的事件名称的数组
         _enterbackgroundTrackTimerEvents = [NSMutableArray array];
-        
         //初始化 SensorsAnalyticsFileStore 类的对象，并使用默认路径
         _fileStore = [[SensorsAnalyticsFileStore alloc]init];
-        
         //初始化 SensorsAnalyticsDatabase 类的对象，并使用默认路径
         _database = [[SensorsAnalyticsDatabase alloc]init];
-        
         //初始化 SensorsAnalyticsNetwork 类的对象，并传入URL
         _network = [[SensorsAnalyticsNetwork alloc]initWithServerURL:[NSURL URLWithString:serverURL]];
-        
         //创建队列标识符和串行队列
         NSString *queueLabel = [NSString stringWithFormat:@"%@.%@.%p",SensorsAnalyticsSerialQueueLabel,self.class,self];
         _serialQueue = dispatch_queue_create([queueLabel UTF8String], DISPATCH_QUEUE_SERIAL);
-        
         _flushBulkSize = 100;
         _flushInterval = 15;
-        
         //建立监听
         [self setupListeners];
+        //调用异常处理单例对象，进行初始化
+        [SensorsAnalyticsExceptionHandler sharedInstance];
         //开启定时器自动上传事件数据
         [self startFlushTimer];
     }
@@ -322,7 +315,7 @@ static SensorsAnalyticsSDK *sharedInstance = nil;
 
 -(void)flushByEventCount:(NSUInteger)count background:(BOOL)background{
     if (background) {
-        __block isContinue = YES;
+        __block BOOL isContinue = YES;
         dispatch_sync(dispatch_get_main_queue(), ^{
             isContinue = UIApplication.sharedApplication.backgroundTimeRemaining >=30;
         });
